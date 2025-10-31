@@ -44,18 +44,26 @@ namespace src.Repositories
 
         public async Task<GetByIdOrderResponse?> GetByIdAsync(GetByIdOrderRequest request)
         {
-            var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == request.Id);
-
-            if (order == null)
-                return null;
-
-            return new GetByIdOrderResponse
+            try
             {
-                Id = order.Id,
-                CustomerId = order.CustomerId,
-                CreatedAt = order.CreatedAt,
-                Lines = order.Lines
-            };
+                var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == request.Id);
+
+                if (order == null)
+                    return null;
+
+                return new GetByIdOrderResponse
+                {
+                    Id = order.Id,
+                    CustomerId = order.CustomerId,
+                    CreatedAt = order.CreatedAt,
+                    Lines = order.Lines
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao consultar pedido: {ex.Message}");
+            }
+
         }
     }
 }

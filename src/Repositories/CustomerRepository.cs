@@ -110,12 +110,13 @@ namespace src.Repositories
 
             try
             {
-                var customer = await GetByIdAsync(getById);
+                var customerResponse = await GetByIdAsync(getById);
                 var newCustomer = new Customer();
 
-                if (customer == null)
+                if (customerResponse == null)
                     throw new Exception("Cliente não encontrado");
 
+                newCustomer.Id = request.Id;
                 newCustomer.Name = request.Name;
                 newCustomer.Email = request.Email;
                 newCustomer.Phone = request.Phone;

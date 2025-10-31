@@ -7,11 +7,11 @@ using BugStore.Responses.Products;
 
 namespace src.Repositories.Abstractions
 {
-    public interface IProductReposiories
+    public interface IProductReposiory
     {
         Task<CreateProductResponse> CreateAsync(CreateProductRequest request);
-        Task<GetByIdProductResponse> GetByIdAsync(GetByIdProductRequest request);
         Task<List<GetProductResponse>> GetAsync(GetProductRequest request);
+        Task<GetByIdProductResponse?> GetByIdAsync(GetByIdProductRequest request);
         Task<UpdateProductResponse> Update(UpdateProductRequest request);
         Task<DeleteProductResponse> Delete(DeleteProductRequest request);
     }
