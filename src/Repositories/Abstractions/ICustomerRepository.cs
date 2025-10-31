@@ -11,7 +11,7 @@ namespace src.Repositories.Abstractions
     {
         Task<CreateCustomerResponse> CreateAsync(CreateCustomerRequest request);
         Task<List<GetCustomerResponse>> GetAsync(GetCustomerRequest request);
-        Task<GetByIdCustomerResponse> GetByIdAsync(GetByIdCustomerRequest request);
+        Task<GetByIdCustomerResponse?> GetByIdAsync(GetByIdCustomerRequest request);
         Task<UpdateCustomerResponse> Update(UpdateCustomerRequest request);
         Task<DeleteCustomerResponse> Delete(DeleteCustomerRequest request);
     }
