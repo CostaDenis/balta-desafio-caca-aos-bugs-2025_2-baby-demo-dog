@@ -10,6 +10,6 @@ namespace src.Repositories.Abstractions
     public interface IOrderRepository
     {
         Task<CreateOrderResponse> CreateAsync(CreateOrderRequest request);
-        Task<GetByIdOrderResponse> GetByIdAsync(GetByIdOrderRequest request);
+        Task<GetByIdOrderResponse?> GetByIdAsync(GetByIdOrderRequest request);
     }
 }
