@@ -1,18 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BugStore.Requests.Products;
-using BugStore.Responses.Products;
+using BugStore.Models;
 
 namespace src.Repositories.Abstractions
 {
-    public interface IProductReposiory
+    public interface IProductRepository
     {
-        Task<CreateProductResponse> CreateAsync(CreateProductRequest request);
-        Task<List<GetProductResponse>> GetAsync(GetProductRequest request);
-        Task<GetByIdProductResponse?> GetByIdAsync(GetByIdProductRequest request);
-        Task<UpdateProductResponse> Update(UpdateProductRequest request);
-        Task<DeleteProductResponse> Delete(DeleteProductRequest request);
+        Task<Product> CreateAsync(Product request);
+        Task<List<Product>> GetAsync(int take, int skip);
+        Task<Product?> GetByIdAsync(Guid id);
+        Task<Product> Update(Product request);
+        Task<bool> Delete(Guid id);
     }
 }

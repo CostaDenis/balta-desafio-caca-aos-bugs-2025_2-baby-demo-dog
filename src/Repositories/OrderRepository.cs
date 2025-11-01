@@ -15,25 +15,14 @@ namespace src.Repositories
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<CreateOrderResponse> CreateAsync(CreateOrderRequest request)
+        public async Task<Order> CreateAsync(Order request)
         {
-            var order = new Order
-            {
-                CustomerId = request.CustomerId,
-                CreatedAt = request.CreatedAt
-            };
-
             try
             {
-                await _context.Orders.AddAsync(order);
+                await _context.Orders.AddAsync(request);
                 await _context.SaveChangesAsync();
 
-                return new CreateOrderResponse
-                {
-                    Id = order.Id,
-                    CustomerId = order.CustomerId,
-                    CreatedAt = order.CreatedAt
-                };
+                return request;
             }
             catch (Exception ex)
             {
@@ -42,22 +31,11 @@ namespace src.Repositories
 
         }
 
-        public async Task<GetByIdOrderResponse?> GetByIdAsync(GetByIdOrderRequest request)
+        public async Task<Order?> GetByIdAsync(Guid id)
         {
             try
             {
-                var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == request.Id);
-
-                if (order == null)
-                    return null;
-
-                return new GetByIdOrderResponse
-                {
-                    Id = order.Id,
-                    CustomerId = order.CustomerId,
-                    CreatedAt = order.CreatedAt,
-                    Lines = order.Lines
-                };
+                return await _context.Orders.FirstOrDefaultAsync(x => x.Id == id);
             }
             catch (Exception ex)
             {

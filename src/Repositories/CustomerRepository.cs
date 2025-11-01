@@ -1,7 +1,5 @@
 using BugStore.Data;
 using BugStore.Models;
-using BugStore.Requests.Customers;
-using BugStore.Responses.Customers;
 using Microsoft.EntityFrameworkCore;
 using src.Repositories.Abstractions;
 
@@ -11,29 +9,14 @@ namespace src.Repositories
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<CreateCustomerResponse> CreateAsync(CreateCustomerRequest request)
+        public async Task<Customer> CreateAsync(Customer request)
         {
-            var customer = new Customer
-            {
-                Name = request.Name,
-                Email = request.Email,
-                Phone = request.Phone,
-                BirthDate = request.BirthDate
-            };
-
             try
             {
-                await _context.Customers.AddAsync(customer);
+                await _context.Customers.AddAsync(request);
                 await _context.SaveChangesAsync();
 
-                return new CreateCustomerResponse
-                {
-                    Id = customer.Id,
-                    Name = customer.Name,
-                    Email = customer.Email,
-                    Phone = customer.Phone,
-                    BirthDate = customer.BirthDate
-                };
+                return request;
             }
             catch (Exception ex)
             {
@@ -42,32 +25,15 @@ namespace src.Repositories
 
         }
 
-        public async Task<List<GetCustomerResponse>> GetAsync(GetCustomerRequest request)
+        public async Task<List<Customer>> GetAsync(int take, int skip)
         {
             try
             {
-                var customersResponse = new List<GetCustomerResponse>();
-                var customers = await _context.Customers.
+                return await _context.Customers.
                                                 AsNoTracking().
-                                                Skip(request.Skip).
-                                                Take(request.Take).
+                                                Skip(skip).
+                                                Take(take).
                                                 ToListAsync();
-
-                foreach (var customer in customers)
-                {
-                    customersResponse.Add(
-                        new GetCustomerResponse
-                        {
-                            Id = customer.Id,
-                            Name = customer.Name,
-                            Email = customer.Email,
-                            Phone = customer.Phone,
-                            BirthDate = customer.BirthDate
-                        }
-                    );
-                }
-
-                return customersResponse;
             }
             catch (Exception ex)
             {
@@ -76,23 +42,11 @@ namespace src.Repositories
 
         }
 
-        public async Task<GetByIdCustomerResponse?> GetByIdAsync(GetByIdCustomerRequest request)
+        public async Task<Customer?> GetByIdAsync(Guid id)
         {
             try
             {
-                var customer = await _context.Customers.FirstOrDefaultAsync(x => x.Id == request.Id);
-
-                if (customer == null)
-                    return null;
-
-                return new GetByIdCustomerResponse
-                {
-                    Id = customer.Id,
-                    Name = customer.Name,
-                    Email = customer.Email,
-                    Phone = customer.Phone,
-                    BirthDate = customer.BirthDate
-                };
+                return await _context.Customers.FirstOrDefaultAsync(x => x.Id == id);
             }
             catch (Exception ex)
             {
@@ -101,37 +55,24 @@ namespace src.Repositories
 
         }
 
-        public async Task<UpdateCustomerResponse> Update(UpdateCustomerRequest request)
+        public async Task<Customer> Update(Customer request)
         {
-            var getById = new GetByIdCustomerRequest
-            {
-                Id = request.Id
-            };
-
             try
             {
-                var customerResponse = await GetByIdAsync(getById);
-                var newCustomer = new Customer();
+                var customer = await GetByIdAsync(request.Id);
 
-                if (customerResponse == null)
-                    throw new Exception("Cliente não encontrado");
+                if (customer == null)
+                    throw new Exception("Cliente não encontrado!");
 
-                newCustomer.Id = request.Id;
-                newCustomer.Name = request.Name;
-                newCustomer.Email = request.Email;
-                newCustomer.Phone = request.Phone;
-                newCustomer.BirthDate = request.BirthDate;
+                customer.Name = request.Name;
+                customer.Email = request.Email;
+                customer.Phone = request.Phone;
+                customer.BirthDate = request.BirthDate;
 
-                _context.Customers.Update(newCustomer);
+                _context.Customers.Update(customer);
                 _context.SaveChanges();
 
-                return new UpdateCustomerResponse
-                {
-                    Name = newCustomer.Name,
-                    Email = newCustomer.Email,
-                    Phone = newCustomer.Phone,
-                    BirthDate = newCustomer.BirthDate
-                };
+                return customer;
             }
             catch (Exception ex)
             {
@@ -140,34 +81,20 @@ namespace src.Repositories
 
         }
 
-        public async Task<DeleteCustomerResponse> Delete(DeleteCustomerRequest request)
+        public async Task<bool> Delete(Guid id)
         {
-            var getById = new GetByIdCustomerRequest
-            {
-                Id = request.Id
-            };
-
             try
             {
-                var customerResponse = await GetByIdAsync(getById);
-                var customer = new Customer();
+                var customer = await GetByIdAsync(id);
 
-                if (customerResponse == null)
+
+                if (customer == null)
                     throw new Exception("Cliente não encontrado");
-
-                customer.Id = customerResponse.Id;
-                customer.Name = customerResponse.Name;
-                customer.Email = customerResponse.Email;
-                customer.Phone = customerResponse.Phone;
-                customer.BirthDate = customerResponse.BirthDate;
 
                 _context.Customers.Remove(customer);
                 _context.SaveChanges();
 
-                return new DeleteCustomerResponse
-                {
-                    Result = "Cliente excluído com sucesso!"
-                };
+                return true;
             }
             catch (Exception ex)
             {
